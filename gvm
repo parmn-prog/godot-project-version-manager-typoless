@@ -1,17 +1,5 @@
 #!/bin/bash
 
-# A simple script that lets you add a .gvm file to your godot project
-# directory, which specifies what version of Godot it will be launched with
-
-# To enable a godot executeable to be run with this, run
-# ./godot-version-manager.sh add <godot-executeable-path> <version-identifier>
-
-# To run a project with it,
-# ./godot-version-manager.sh edit <path to project.godot/project directory>
-# The project directory should have a .gvm file, with it's only text being the version identifier that the project should be run with
-# If no .gvm file exists, or file is invalid, it'll run with the default version, specified in the DEFAULT property of ~/.config/godot-version-manager/gvm.conf
-# If no default is specified either, attempts to run with the newest version (may malfunction if there are letters in the version identifiers)
-
 CONFIG_PATH=$HOME/.config/godot-version-manager
 CONF_FILE_PATH="${CONFIG_PATH}/gvm.conf"
 SYMLINK_FOLDER=$CONFIG_PATH
@@ -54,12 +42,12 @@ EditProject() {
     exit 1
   fi
 
-  GVM_FILE="${PROJECT_FOLDER}/.gvm"
+  GVM_FILE="${PROJECT_FOLDER}/.gpvm-version"
 
   if [[ -f "$GVM_FILE" ]]; then
     VERSION=$(cat "$GVM_FILE")
   else
-    echo "NO .gvm FILE PRESENT, USING DEFAULT"
+    echo "NO .gpvm-version FILE PRESENT, USING DEFAULT"
 
     source CONF_FILE_PATH
     if [ ! -v DEFAULT ] || [ ! -f "${CONFIG_PATH}/${DEFAULT}" ]; then
