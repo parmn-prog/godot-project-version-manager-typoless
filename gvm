@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# A simple script that lets you add a .gvm file to your godot project
+# directory, which specifies what version of Godot it will be launched with
+
+# To enable a godot executeable to be run with this, run
+# ./godot-version-manager.sh add <godot-executeable-path> <version-identifier>
+
+# To run a project with it,
+# ./godot-version-manager.sh edit <path to project.godot/project directory>
+# The project directory should have a .gvm file, with it's only text being the version identifier that the project should be run with
+# If no .gvm file exists, or file is invalid, it'll run with the default version, specified in the DEFAULT property of ~/.config/godot-version-manager/gvm.conf
+# If no default is specified either, attempts to run with the newest version (may malfunction if there are letters in the version identifiers)
+
+CONFIG_PATH=$HOME/.config/godot-version-manager
+CONF_FILE_PATH="${CONFIG_PATH}/gvm.conf"
+SYMLINK_FOLDER=$CONFIG_PATH
+
+AddVersion() {
+  SYMLINK_PATH="${SYMLINK_FOLDER}/$2"
+
+  if [ ! -d "$SYMLINK_FOLDER" ]; then
+    echo "Creating Symlink Directory"
+    mkdir "$SYMLINK_FOLDER"
+  fi
+
+  echo "Creating/Updating Symlink at $SYMLINK_PATH"
+  ln -sf "$(realpath $1)" "$SYMLINK_PATH"
+}
+
+
+RemoveVersion() {
+  SYMLINK_PATH="${SYMLINK_FOLDER}/$1"
+  if [[ -f SYMLINK_PATH ]]; then
+    rm SYMLINK_PATH
+  else
+    echo "NO SUCH VERSION"
+  fi
+}
+
+EditProject() {
+  GLOBAL_PATH=$(realpath $1)
+
+  # This way it works if you pass in the .godot file`
+  # or if you pass in the folder with the project
+  if [ -d "$GLOBAL_PATH" ] && [ -f "${GLOBAL_PATH}/project.godot" ]; then
+    PROJECT_FILE="${GLOBAL_PATH}/project.godot"
+    PROJECT_FOLDER="$GLOBAL_PATH"
+  elif [ -f "$GLOBAL_PATH" ] && [ "${GLOBAL_PATH##*/}" == "project.godot" ]; then
+    PROJECT_FILE="$GLOBAL_PATH"
+    PROJECT_FOLDER=$(dirname "$GLOBAL_PATH")
+  else
+    echo "INVALID INPUT"
+    exit 1
+  fi
+
+  GVM_FILE="${PROJECT_FOLDER}/.gvm"
+
+  if [[ -f "$GVM_FILE" ]]; then
+    VERSION=$(cat "$GVM_FILE")
+  else
+    echo "NO .gvm FILE PRESENT, USING DEFAULT"
+
+    source CONF_FILE_PATH
+    if [ ! -v DEFAULT ] || [ ! -f "${CONFIG_PATH}/${DEFAULT}" ]; then
+      echo "NO/INVALID DEFAULT PRESENT, USING NEWEST VERSION"
+      echo "to set default version, set DEFAULT property in $CONF_FILE_PATH"
+      DEFAULT=$(ls $CONFIG_PATH -v | tail -n 1)
+    fi
+
+    VERSION=${DEFAULT}
+  fi
+
+  eval "${SYMLINK_FOLDER}/${VERSION} --editor && disown"
+}
+
+if [[ "$1" == "add" ]]; then
+  AddVersion $2 $3
+elif [[ "$1" == "edit" ]]; then
+  EditProject $2
+elif [[ "$1" == "remove" ]]; then
+  RemoveVersion $2
+fi
