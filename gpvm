@@ -29,14 +29,25 @@ AddVersion() {
 }
 
 
-RemoveVersion() {
+LaunchVersion() {
   SYMLINK_PATH="${SYMLINK_FOLDER}/$1"
-  if [[ -f SYMLINK_PATH ]]; then
-    rm SYMLINK_PATH
+  if [[ -f $SYMLINK_PATH ]]; then
+    eval "${SYMLINK_PATH} --project-manager && disown"
   else
     echo "NO SUCH VERSION"
   fi
 }
+
+
+RemoveVersion() {
+  SYMLINK_PATH="${SYMLINK_FOLDER}/$1"
+  if [[ -f $SYMLINK_PATH ]]; then
+    rm ${SYMLINK_PATH}
+  else
+    echo "NO SUCH VERSION"
+  fi
+}
+
 
 EditProject() {
   GLOBAL_PATH=$(realpath $1)
@@ -74,10 +85,13 @@ EditProject() {
   eval "${SYMLINK_FOLDER}/${VERSION} --editor && disown"
 }
 
+
 if [[ "$1" == "add" ]]; then
   AddVersion $2 $3
 elif [[ "$1" == "edit" ]]; then
   EditProject $2
 elif [[ "$1" == "remove" ]]; then
   RemoveVersion $2
+elif [[ "$1" == "launch" ]]; then
+	LaunchVersion $2
 fi
