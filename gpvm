@@ -32,7 +32,8 @@ AddVersion() {
 LaunchVersion() {
   SYMLINK_PATH="${SYMLINK_FOLDER}/$1"
   if [[ -f $SYMLINK_PATH ]]; then
-    eval "${SYMLINK_PATH} --project-manager && disown"
+    echo "Launching $(realpath ${SYMLINK_PATH})"
+    eval "${SYMLINK_PATH} --project-manager"
   else
     echo "NO SUCH VERSION"
   fi
@@ -82,7 +83,7 @@ EditProject() {
     VERSION=${DEFAULT}
   fi
 
-  eval "${SYMLINK_FOLDER}/${VERSION} --editor && disown"
+  eval "${SYMLINK_FOLDER}/${VERSION} --editor"
 }
 
 
@@ -93,5 +94,5 @@ elif [[ "$1" == "edit" ]]; then
 elif [[ "$1" == "remove" ]]; then
   RemoveVersion $2
 elif [[ "$1" == "launch" ]]; then
-	LaunchVersion $2
+  LaunchVersion $2
 fi
