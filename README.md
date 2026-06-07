@@ -1,6 +1,6 @@
 # GODOT PROJECT VERSION MANAGER
 
-A simple *command line Godot Project Manager* (for linux) to manage what version a godot project should be opened with it, supporting custom godot builds
+A simple *command line Godot Project Manager* (for linux) to manage what ~~version~~ executable a godot project should be opened with it, supporting custom godot builds
 
 **NOTE: This Project does NOT manage your Godot Versions, it's only to manage the versions of PROJECTS**
 
@@ -20,5 +20,6 @@ If you want something like this but better, I like [fgvm](https://github.com/pat
 
 ## Getting Started
 
-
-
+- Use `gpvm add <path to godot> <identifier>` to assign an identifier to a godot executable
+- In your project directory, add a `.gpvm-version` file and in it the only text should be the identifier of the godot executable you want to open this with
+- `gpvm edit <path to project.godot file/project directory>` will now open the project in the executable specified by the identifer in the `.gpvm-version` file
