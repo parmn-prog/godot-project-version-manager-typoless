@@ -78,6 +78,21 @@ EditProject() {
 }
 
 
+PrintHelp() {
+  printf "Usage: gpvm <ACTION> [ARGUMENTS] \n\n"
+  echo "Actions:"
+  echo "  add <GODOT_EXECUTABLE> <IDENTIFIER>"
+  echo "    Adds identifier IDENTIFIER to given executable"
+  echo "  list"
+  echo "    List All Assigned Identifiers"
+  echo "  launch <IDENTIFIER>"
+  echo "    Launches Executable attached to given identifier"
+  echo "  remove <IDENTIFIER>"
+  echo "    Unassigns Identifier"
+  echo "  edit <PATH TO GODOT PROJECT/project.godot FILE>"
+  echo "    Opens project in version specified by .gpvm-version, otherwise default. Version can be overridden using --version flag"
+}
+
 if [[ "$1" == "add" ]]; then
   AddVersion $2 $3
 elif [[ "$1" == "list" ]]; then
@@ -88,6 +103,8 @@ elif [[ "$1" == "remove" ]]; then
   RemoveVersion $2
 elif [[ "$1" == "launch" ]]; then
   LaunchVersion $2
+elif [[ "$1" == "--help" ]]; then
+  PrintHelp
 else
   echo "Invalid Argument. Please run --help to see valid arguments"
 fi
