@@ -1,3 +1,5 @@
+#!/bin/bash
+
 CONFIG_PATH=$HOME/.config/godot-version-manager
 CONF_FILE_PATH="${CONFIG_PATH}/gvm.conf"
 SYMLINK_FOLDER=$CONFIG_PATH
@@ -55,12 +57,12 @@ EditProject() {
     exit 1
   fi
 
-  GVM_FILE="${PROJECT_FOLDER}/.gvm"
+  GVM_FILE="${PROJECT_FOLDER}/.gpvm-version"
 
   if [[ -f "$GVM_FILE" ]]; then
     VERSION=$(cat "$GVM_FILE")
   else
-    echo "NO .gvm FILE PRESENT, USING DEFAULT"
+    echo "NO .gpvm-version FILE PRESENT, USING DEFAULT"
 
     source CONF_FILE_PATH
     if [ ! -v DEFAULT ] || [ ! -f "${CONFIG_PATH}/${DEFAULT}" ]; then
