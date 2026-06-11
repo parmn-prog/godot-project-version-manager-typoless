@@ -2,7 +2,7 @@
 
 A simple *command line Godot Project Manager* (for linux) to manage what ~~version~~ executable a godot project should be opened with it, supporting custom godot builds
 
-**NOTE: This Project does NOT manage your Godot Versions, it's only to manage the versions of PROJECTS**
+**NOTE: This Project does NOT manage your Godot Installations, it's only to manage running the correct Godot executable for projects**
 
 ## Introduction
 

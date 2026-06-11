@@ -16,15 +16,30 @@ AddVersion() {
   ln -sf "$(realpath $1)" "$SYMLINK_PATH"
 }
 
+ListVersions() {
+  echo $(find ~/.config/godot-version-manager/ -maxdepth 1 -type l -exec basename {} \;)
+}
 
-RemoveVersion() {
+LaunchVersion() {
   SYMLINK_PATH="${SYMLINK_FOLDER}/$1"
-  if [[ -f SYMLINK_PATH ]]; then
-    rm SYMLINK_PATH
+  if [[ -f $SYMLINK_PATH ]]; then
+    echo "Launching $(realpath ${SYMLINK_PATH})"
+    eval "${SYMLINK_PATH} --project-manager"
   else
     echo "NO SUCH VERSION"
   fi
 }
+
+
+RemoveVersion() {
+  SYMLINK_PATH="${SYMLINK_FOLDER}/$1"
+  if [[ -f $SYMLINK_PATH ]]; then
+    rm ${SYMLINK_PATH}
+  else
+    echo "NO SUCH VERSION"
+  fi
+}
+
 
 EditProject() {
   GLOBAL_PATH=$(realpath $1)
@@ -59,13 +74,45 @@ EditProject() {
     VERSION=${DEFAULT}
   fi
 
-  eval "${SYMLINK_FOLDER}/${VERSION} --editor && disown"
+  eval "${SYMLINK_FOLDER}/${VERSION} --editor"
+}
+
+
+PrintHelp() {
+  printf "Usage: gpvm <ACTION> [ARGUMENTS] \n\n"
+  echo "Actions:"
+  echo "  add <GODOT_EXECUTABLE> <IDENTIFIER>"
+  echo "    Adds identifier IDENTIFIER to given executable"
+  echo "  list"
+  echo "    List All Assigned Identifiers"
+  echo "  launch <IDENTIFIER>"
+  echo "    Launches Executable attached to given identifier"
+  echo "  remove <IDENTIFIER>"
+  echo "    Unassigns Identifier"
+  echo "  edit <PATH TO GODOT PROJECT/project.godot FILE>"
+  echo "    Opens project in version specified by .gpvm-version, otherwise default. Version can be overridden using --version flag"
+  printf "\n\nFlags:\n"
+  printf "  Flags should be put as the last arguments\n\n"
+  echo "  --version:	Can be used to override/specify a version project should be opened in when using gpvm edit"
+  printf "\n\nExamples:\n\n"
+  echo "gpvm add ~/Applications/Godot_v4.6.2-stable_mono_linux.x86_64 4.6.2Mono"
+  echo "gpvm launch 4.6.2Mono"
+  echo "gpvm edit Projects/GodotProject"
+  echo
 }
 
 if [[ "$1" == "add" ]]; then
   AddVersion $2 $3
+elif [[ "$1" == "list" ]]; then
+  ListVersions
 elif [[ "$1" == "edit" ]]; then
   EditProject $2
 elif [[ "$1" == "remove" ]]; then
   RemoveVersion $2
+elif [[ "$1" == "launch" ]]; then
+  LaunchVersion $2
+elif [[ "$1" == "--help" ]]; then
+  PrintHelp
+else
+  echo "Invalid Argument. Please run --help to see valid arguments"
 fi
